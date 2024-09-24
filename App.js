@@ -1,119 +1,151 @@
+import React, { useState } from "react";
 import {
   FlatList,
   StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
-  View,Image
+  View,
+  Image,
 } from "react-native";
-import React, { useState } from "react";
 
 const App = () => {
-  const [task, settask] = useState("");
-  const [data, setdata] = useState([]);
-  const [imagevisible,setimagevisible] =useState(false);
+  const [task, setTask] = useState("");
+  const [data, setData] = useState([]);
+  const [imagevisible, setimagevisible] = useState(false);
+  const [currentTaskId, setCurrentTaskId] = useState(null);
 
-  const updateTick = ()=>
-  {
-    setimagevisible(!imagevisible)
+  const handleTask = () => {
+    if (task.trim()) {
+      if (currentTaskId) {
+        setData(
+          data.map((item) =>
+            item.id === currentTaskId ? { ...item, name: task } : item
+          )
+        );
+      } else {
+        setData([...data, { id: Math.random().toString(), name: task }]);
+      }
+      setTask("");
+      setCurrentTaskId(null);
+    }
   };
 
-  const addtask = () => {
-    if (task.trim() !== "")
-      setdata([...data, { id: Math.random().toString(), name: task }]);
-    settask("");
+  const updateTick = () => {
+    setimagevisible(!imagevisible);
   };
 
-  const deleteTask = (taskid) => {
-    setdata(data.filter((item) => item.id !== taskid));
+  const editTask = (id) => {
+    const taskToEdit = data.find((item) => item.id === id);
+    setTask(taskToEdit.name);
+    setCurrentTaskId(id);
   };
 
-  const renderItem = ({ item }) => {
-    return (
-      <View style={styles.render}>
-        <TouchableOpacity style={styles.box} onPress={updateTick} >
-         {imagevisible &&  <Image source={require("./assets/check.png")} style={{width:20,height:20,resizeMode:"contain"}}/> }
-        </TouchableOpacity>
-        <Text>{item.name}</Text>
-        <TouchableOpacity onPress={() => deleteTask(item.id)}>
-          <Text style={styles.deleteText}>Delete</Text>
-        </TouchableOpacity>
-      </View>
-    );
+  const deleteTask = (id) => {
+    setData(data.filter((item) => item.id !== id));
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.heading}>Todo List</Text>
+      <Text
+        style={{
+          marginVertical: 20,
+          alignSelf: "center",
+          fontSize: 22,
+          color: "forestgreen",
+          fontWeight: "500",
+        }}
+      >
+        TODO LIST APP
+      </Text>
       <TextInput
-        placeholder="Type your task"
-        style={styles.txtplacehld}
+        placeholder="Task"
+        style={styles.input}
         value={task}
-        onChangeText={(text) => settask(text)}
+        onChangeText={setTask}
       />
-      <TouchableOpacity style={styles.add} onPress={addtask}>
-        <Text style={styles.task}>ADD TASK</Text>
+      <TouchableOpacity style={styles.button} onPress={handleTask}>
+        <Text style={styles.addbtn}>{currentTaskId ? "Update" : "Add"}</Text>
       </TouchableOpacity>
       <FlatList
+      showsVerticalScrollIndicator={false}
         data={data}
-        renderItem={renderItem}
         keyExtractor={(item) => item.id}
+        renderItem={({ item }) => (
+          <View style={styles.item}>
+            <TouchableOpacity style={styles.box} onPress={updateTick}>
+              {imagevisible && (
+                <Image
+                  source={require("./Src/assets/check.png")}
+                  style={{ width: 20, height: 20, resizeMode: "contain" }}
+                />
+              )}
+            </TouchableOpacity>
+            <Text>{item.name}</Text>
+
+            <TouchableOpacity
+              style={{ marginLeft: 65 }}
+              onPress={() => editTask(item.id)}
+            >
+              <Text style={styles.editText}>Edit</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => deleteTask(item.id)}>
+              <Text style={styles.deleteText}>Delete</Text>
+            </TouchableOpacity>
+          </View>
+        )}
       />
     </View>
   );
 };
 
-export default App;
-
 const styles = StyleSheet.create({
-  txtplacehld: {
-    marginTop: 10,
-    paddingVertical: 5,
-    paddingHorizontal: 10,
-    borderWidth: 0.5,
-    textAlign: "left",
-    width: 250,
-    alignSelf: "center",
+  container: {
+    flex: 1,
+    padding: 20,
   },
-  heading: {
-    fontSize: 22,
-    alignSelf: "center",
+  input: {
+    marginBottom: 10,
+    padding: 10,
+    borderWidth: 1,
+    borderRadius: 5,
   },
-  render: {
-    backgroundColor: "greenyellow",
-    paddingVertical: 5,
-    paddingHorizontal: 5,
-
-    width: 250,
-    marginTop: 10,
+  button: {
+    backgroundColor: "forestgreen",
+    padding: 10,
+    borderRadius: 7,
+    alignItems: "center",
+  },
+  item: {
     flexDirection: "row",
-    justifyContent: "space-between", // Space between text and button
-    alignItems: "center", // Center items vertically
+    justifyContent: "space-between",
+    padding: 10,
+    borderRadius: 8,
+    backgroundColor: "lavender",
+    marginTop: 10,
+  },
+  editText: {
+    color: "forestgreen",
+    fontSize: 15,
+    fontWeight: "600",
+  },
+  deleteText: {
+    color: "red",
+    fontSize: 15,
+    fontWeight: "600",
   },
   box: {
     width: 20,
     height: 20,
-    borderWidth:0.5,
-    backgroundColor: "white", 
-    marginRight: 10, 
+    borderWidth: 0.5,
+    backgroundColor: "white",
+    marginRight: 10,
+    borderRadius: 5,
   },
-  container: {
-    flex: 1,
-    justifyContent: "flex-start",
-    alignItems: "center",
-    marginTop: 50,
-    paddingHorizontal: 20,
-  },
-  add: {
-    backgroundColor: "lightblue",
-    paddingVertical: 5,
-    paddingHorizontal: 90,
-    marginTop: 10,
-    marginVertical: 20,
-    alignSelf: "center",
-  },
-  task: {
-    fontSize: 16,
-    fontWeight: "700",
+  addbtn: {
+    fontSize: 18,
+    color: "white",
   },
 });
+
+export default App;
