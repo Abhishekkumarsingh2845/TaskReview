@@ -12,7 +12,6 @@ import {
 const App = () => {
   const [task, setTask] = useState("");
   const [data, setData] = useState([]);
-  const [imagevisible, setimagevisible] = useState(false);
   const [currentTaskId, setCurrentTaskId] = useState(null);
 
   const handleTask = () => {
@@ -24,15 +23,19 @@ const App = () => {
           )
         );
       } else {
-        setData([...data, { id: Math.random().toString(), name: task }]);
+        setData([...data, { id: Math.random().toString(), name: task, checked: false }]);
       }
       setTask("");
       setCurrentTaskId(null);
     }
   };
 
-  const updateTick = () => {
-    setimagevisible(!imagevisible);
+  const updateTick = (id) => {
+    setData(
+      data.map((item) =>
+        item.id === id ? { ...item, checked: !item.checked } : item
+      )
+    );
   };
 
   const editTask = (id) => {
@@ -47,17 +50,7 @@ const App = () => {
 
   return (
     <View style={styles.container}>
-      <Text
-        style={{
-          marginVertical: 20,
-          alignSelf: "center",
-          fontSize: 22,
-          color: "forestgreen",
-          fontWeight: "500",
-        }}
-      >
-        TODO LIST APP
-      </Text>
+      <Text style={styles.title}>TODO LIST APP</Text>
       <TextInput
         placeholder="Task"
         style={styles.input}
@@ -68,25 +61,21 @@ const App = () => {
         <Text style={styles.addbtn}>{currentTaskId ? "Update" : "Add"}</Text>
       </TouchableOpacity>
       <FlatList
-      showsVerticalScrollIndicator={false}
+        showsVerticalScrollIndicator={false}
         data={data}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
           <View style={styles.item}>
-            <TouchableOpacity style={styles.box} onPress={updateTick}>
-              {imagevisible && (
+            <TouchableOpacity style={styles.box} onPress={() => updateTick(item.id)}>
+              {item.checked && (
                 <Image
                   source={require("./Src/assets/check.png")}
-                  style={{ width: 20, height: 20, resizeMode: "contain" }}
+                  style={styles.checkImage}
                 />
               )}
             </TouchableOpacity>
-            <Text>{item.name}</Text>
-
-            <TouchableOpacity
-              style={{ marginLeft: 65 }}
-              onPress={() => editTask(item.id)}
-            >
+            <Text style={{ textDecorationLine: item.checked ? 'line-through' : 'none' }}>{item.name}</Text>
+            <TouchableOpacity style={{ marginLeft: 20 }} onPress={() => editTask(item.id)}>
               <Text style={styles.editText}>Edit</Text>
             </TouchableOpacity>
             <TouchableOpacity onPress={() => deleteTask(item.id)}>
@@ -103,6 +92,13 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
+  },
+  title: {
+    marginVertical: 20,
+    alignSelf: "center",
+    fontSize: 22,
+    color: "forestgreen",
+    fontWeight: "500",
   },
   input: {
     marginBottom: 10,
@@ -145,6 +141,11 @@ const styles = StyleSheet.create({
   addbtn: {
     fontSize: 18,
     color: "white",
+  },
+  checkImage: {
+    width: 20,
+    height: 20,
+    resizeMode: "contain",
   },
 });
 
