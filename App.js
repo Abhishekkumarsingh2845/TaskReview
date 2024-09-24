@@ -74,7 +74,7 @@ const App = () => {
                 />
               )}
             </TouchableOpacity>
-            <Text style={{ textDecorationLine: item.checked ? 'line-through' : 'none' }}>{item.name}</Text>
+            <Text>{item.name}</Text>
             <TouchableOpacity style={{ marginLeft: 20 }} onPress={() => editTask(item.id)}>
               <Text style={styles.editText}>Edit</Text>
             </TouchableOpacity>
