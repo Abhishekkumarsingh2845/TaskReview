@@ -2,14 +2,14 @@ export const  ADDTOCART = "ADDTOCART";
 export const REMOVECART = "REMOVECART";
 
 
-export const addcart = (item) => ({
+export const addcart = (product) => ({
     type : ADDTOCART,
-    payload :  item,
+    payload :  product,
 });
 
-export const removecart = (itemid) => ({
+export const removecart = (productID) => ({
     type : REMOVECART,
-    payload : itemid
+    payload : productID
 });
 
 
