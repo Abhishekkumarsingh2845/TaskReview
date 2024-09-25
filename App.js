@@ -52,7 +52,6 @@
 //     setData(data.filter((item) => item.id !== id));
 //   };
 
-  
 //   const selectAllTasks = () => {
 //     setSelectAll(!selectAll);
 //     setData(data.map((item) => ({ ...item, checked: !selectAll })));
@@ -70,7 +69,7 @@
 //       <TouchableOpacity style={styles.button} onPress={handleTask}>
 //         <Text style={styles.addbtn}>{currentTaskId ? "Update" : "Add"}</Text>
 //       </TouchableOpacity>
-      
+
 //       <TouchableOpacity onPress={selectAllTasks} style={styles.selectAllButton}>
 //         <Text style={styles.selectAllText}>{selectAll ? "Unselect" : "Select All"}</Text>
 //       </TouchableOpacity>
@@ -188,121 +187,47 @@
 
 
 
-// import React, { useState } from 'react';
-// import { Button, Image, View, StyleSheet, Alert } from 'react-native';
-// import * as ImagePicker from 'expo-image-picker';
-
-// const GalleryPicker = () => {
-//   const [selectedImages, setSelectedImages] = useState([]);
-
-//   const requestGalleryPermissions = async () => {
-//     const { granted } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-//     return granted;
-//   };
-
-//   const handleImageSelection = async () => {
-//     const result = await ImagePicker.launchImageLibraryAsync({
-//       mediaTypes: ImagePicker.MediaTypeOptions.Images,
-//       allowsEditing: false,
-//       quality: 1,
-//     });
-
-//     if (!result.canceled && result.assets?.length > 0) {
-//       const uri = result.assets[0].uri;
-//       setSelectedImages((prevImages) => [...prevImages, uri]);
-//     }
-//   };
-
-//   const openGallery = async () => {
-//     const hasPermission = await requestGalleryPermissions();
-//     if (!hasPermission) {
-//       return Alert.alert('Permission to access the media library is required!');
-//     }
-//     await handleImageSelection();
-//   };
-
-//   return (
-//     <View style={styles.container}>
-//       <Button title="Open Gallery" onPress={openGallery} />
-//       <View style={styles.imageContainer}>
-//         {selectedImages.map((imageUri, index) => (
-//           <Image key={index} source={{ uri: imageUri }} style={styles.image} />
-//         ))}
-//       </View>
-//     </View>
-//   );
-// };
-
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     alignItems: 'center',
-//     justifyContent: 'center',
-//     padding: 20,
-//   },
-//   imageContainer: {
-//     flexDirection: 'row',
-//     flexWrap: 'wrap',
-//     justifyContent: 'center',
-//     marginTop: 20,
-//   },
-//   image: {
-//     width: 100,
-//     height: 100,
-//     margin: 5,
-//     borderRadius: 10,
-//     borderColor: '#ccc',
-//     borderWidth: 1,
-//   },
-// });
-
-// export default GalleryPicker;
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// code to oepn a gallery
 
 import React, { useState } from 'react';
 import { Button, Image, View, StyleSheet, Alert } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 
 const GalleryPicker = () => {
-  
+  const [selectedImages, setSelectedImages] = useState([]);
 
-  const openGallery = async () => { 
+  const openGallery = async () => {
+  
     const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
 
-    if (permissionResult.granted === false) {
-      Alert.alert('Permission to access the media library is required!');
+    if (!permissionResult.granted) {
+      Alert.alert("Permission to access the media library is required!");
       return;
     }
-    const result = await ImagePicker.launchImageLibraryAsync();
 
-   
+    // Launch the image library
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: false,
+      quality: 1,
+    });
+
+    // Handle image selection
+    if (!result.canceled && result.assets?.length > 0) {
+      const uri = result.assets[0].uri;
+      setSelectedImages((prevImages) => [...prevImages, uri]);
+    }
   };
 
   return (
     <View style={styles.container}>
       <Button title="Open Gallery" onPress={openGallery} />
+      <View style={styles.imageContainer}>
+        {selectedImages.map((imageUri, index) => (
+          <Image key={index} source={{ uri: imageUri }} style={styles.image} />
+        ))}
+      </View>
     </View>
   );
 };
@@ -312,13 +237,70 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+    padding: 20,
+  },
+  imageContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+    marginTop: 20,
   },
   image: {
-    width: 200,
-    height: 200,
-    marginTop: 20,
+    width: 100,
+    height: 100,
+    margin: 5,
     borderRadius: 10,
+    borderColor: '#ccc',
+    borderWidth: 1,
   },
 });
 
 export default GalleryPicker;
+
+
+
+
+
+
+
+
+// // code to oepn a gallery
+
+// import React, { useState } from "react";
+// import { Button, Image, View, StyleSheet, Alert } from "react-native";
+// import * as ImagePicker from "expo-image-picker";
+
+// const GalleryPicker = () => {
+//   const openGallery = async () => {
+//     const permissionResult =
+//       await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+//     if (permissionResult.granted === false) {
+//       Alert.alert("Permission to access the media library is required!");
+//       return;
+//     }
+//     const result = await ImagePicker.launchImageLibraryAsync();
+//   };
+
+//   return (
+//     <View style={styles.container}>
+//       <Button title="Open Gallery" onPress={openGallery} />
+//     </View>
+//   );
+// };
+
+// const styles = StyleSheet.create({
+//   container: {
+//     flex: 1,
+//     alignItems: "center",
+//     justifyContent: "center",
+//   },
+//   image: {
+//     width: 200,
+//     height: 200,
+//     marginTop: 20,
+//     borderRadius: 10,
+//   },
+// });
+
+// export default GalleryPicker;
